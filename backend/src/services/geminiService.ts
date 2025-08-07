@@ -7,7 +7,7 @@ export class GeminiService {
 
   constructor(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   }
 
   async generateBlogContent(learningContent: string): Promise<GeminiPromptResponse> {
@@ -48,40 +48,20 @@ export class GeminiService {
 
   private formatPrompt(content: string): string {
     return `
-以下の学習内容を構造化されたブログ記事に変換してください：
-
-【学習内容】
+学習内容をブログ記事に変換：
 ${content}
 
-【要求事項】
-1. 適切なタイトルを自動生成
-2. 要約（100文字程度）を作成
-3. 本文をHTML形式で構造化（見出し、段落、リストなどを使用）
-4. 関連するタグを3-5個提案
-5. 読了時間を推定（分単位）
-6. 文字数をカウント
-7. ですます調を使わず、自分ごととして記述
-
-【出力形式】
-必ずJSON形式で以下の構造で返してください：
+JSON形式で出力:
 {
-  "title": "記事タイトル",
-  "summary": "要約（100文字程度）",
-  "htmlContent": "<div class='blog-content'><h2>見出し</h2><p>本文...</p></div>",
-  "tags": ["タグ1", "タグ2", "タグ3"],
-  "metadata": {
-    "readingTime": 5,
-    "wordCount": 1000
-  }
+  "title": "タイトル",
+  "summary": "100文字要約",
+  "htmlContent": "<div class='blog-content'>HTML本文（h2,p,ul,ol,li,strong,em,code使用）</div>",
+  "tags": ["タグ3-5個"],
+  "metadata": {"readingTime": 分, "wordCount": 文字数}
 }
 
-注意：
-- HTMLは適切にエスケープしてください
-- コードブロックがある場合は<pre><code class="language-[言語名]">タグを使用（例：class="language-javascript"）
-- インラインコードは<code>タグを使用
-- 重要な部分は<strong>や<em>タグで強調
-- 箇条書きは<ul>/<ol>と<li>タグを使用
-- 対応言語：javascript, typescript, jsx, tsx, json, css, bash, python, java など（htmlはlanguage-markupを使用）
+・ですます調禁止、自分ごととして記述
+・コードは<pre><code class="language-言語名">を使用
 `;
   }
 
